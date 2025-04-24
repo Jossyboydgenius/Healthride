@@ -13,7 +13,7 @@ class VerificationStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // For demo purposes, we'll use PENDING status
     // In a real app, this would come from a service or provider
-    final status = VerificationStatus.pending;
+    const status = VerificationStatus.pending;
     final submissionDate = DateTime.now().subtract(const Duration(days: 1));
     final estimatedCompletionDate = DateTime.now().add(const Duration(days: 2));
 
@@ -38,7 +38,7 @@ class VerificationStatusScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Status indicator
-              _StatusIndicator(status: status),
+              const _StatusIndicator(status: status),
               const SizedBox(height: 32),
 
               // Progress tracker
@@ -110,7 +110,7 @@ class VerificationStatusScreen extends StatelessWidget {
                     if (status == VerificationStatus.rejected)
                       Column(
                         children: [
-                          _DetailRow(
+                          const _DetailRow(
                             icon: Icons.error_outline,
                             title: 'Rejection Reason',
                             value:
