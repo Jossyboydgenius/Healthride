@@ -8,6 +8,7 @@ import 'booking_steps/date_time_step.dart';
 import 'booking_steps/ride_type_step.dart';
 import 'booking_steps/confirmation_step.dart';
 import 'dotted_line_painter.dart';
+import 'appointment_type_modal.dart';
 
 /// A draggable bottom sheet for booking rides with multi-step flow
 class BookingModal extends StatefulWidget {
@@ -658,13 +659,23 @@ class TripDetailsStep extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             GestureDetector(
-              onTap: () => onShowAppointmentDropdown(true),
+              onTap: () {
+                showAppointmentTypeModal(
+                  context: context,
+                  initialValue: selectedAppointmentType,
+                  onSelected: onAppointmentTypeSelect,
+                );
+              },
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFFE2E8F0),
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -674,50 +685,23 @@ class TripDetailsStep extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           color: selectedAppointmentType != null
-                              ? AppColor.textDarkBlue
-                              : AppColor.textMediumGray,
+                              ? Colors.black87
+                              : Colors.black38,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    const Icon(Icons.arrow_drop_down,
-                        color: AppColor.textMediumGray),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Colors.black54,
+                    ),
                   ],
                 ),
               ),
             ),
           ],
         ),
-
-        // Appointment Type Dropdown
-        if (showAppointmentDropdown)
-          Container(
-            height: 200,
-            margin: const EdgeInsets.only(top: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ListView.builder(
-              itemCount: appointmentTypes.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(appointmentTypes[index]),
-                  onTap: () {
-                    onAppointmentTypeSelect(appointmentTypes[index]);
-                    onShowAppointmentDropdown(false);
-                  },
-                );
-              },
-            ),
-          ),
       ],
     );
   }
