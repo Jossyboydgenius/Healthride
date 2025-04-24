@@ -25,6 +25,11 @@ import '../screens/ride_screen.dart';
 import '../screens/notifications_screen.dart';
 import '../screens/profile_screen.dart';
 
+// Import the necessary packages
+import 'package:flutter/animation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/scheduler.dart';
+
 class ModernHomeScreen extends StatefulWidget {
   const ModernHomeScreen({super.key});
 
@@ -50,7 +55,10 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
   // Booking state
   bool _showBookingModal = false;
   bool _showRoutePreview = false;
-  int _bookingStep = 0;
+  int _currentBookingStep = 0;
+  bool _isBookingLoading = false;
+  bool _showBookingSuccessDialog = false;
+  bool _isShowingAppointmentDropdown = false;
 
   // Booking details
   RideType _selectedRideType = RideType.ambulatory;
@@ -182,7 +190,7 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
       _showBookingModal = false;
       _showRoutePreview = false;
       _showRecentPlaces = true;
-      _bookingStep = 0;
+      _currentBookingStep = 0;
     });
   }
 
@@ -248,6 +256,12 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
             const Center(
               child: LoadingAnimation(),
             ),
+
+          // Booking Modal
+          if (_showBookingModal) _buildBookingModal(),
+
+          // Route Preview
+          if (_showRoutePreview) _buildRoutePreview(),
         ],
       ),
       bottomNavigationBar: HealthRideBottomNavigation(
@@ -511,12 +525,6 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
                 ),
               ),
             ),
-
-          // Booking Modal
-          if (_showBookingModal) _buildBookingModal(),
-
-          // Route Preview
-          if (_showRoutePreview) _buildRoutePreview(),
         ],
       ),
     );
@@ -534,89 +542,239 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
     return ProfileScreen(user: _currentUser);
   }
 
-  // Original implementations kept below
-
   Widget _buildBookingModal() {
-    return Positioned(
+    final screenHeight = MediaQuery.of(context).size.height;
+    final stepHeights = {
+      0: 0.5, // Trip Details
+      1: 0.7, // Ride Type
+      2: 0.75, // Date & Time
+      3: 0.6, // Requirements
+      4: 0.75, // Confirmation
+    };
+
+    // Get the current step height or default to 0.6
+    final sheetHeightFraction = stepHeights[_currentBookingStep] ?? 0.6;
+
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.fastOutSlowIn,
       bottom: 0,
       left: 0,
       right: 0,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.85,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(28),
-            topRight: Radius.circular(28),
+      height: screenHeight * sheetHeightFraction,
+      child: GestureDetector(
+        onVerticalDragUpdate: (details) {
+          // Prevent accidental closing
+          if (_currentBookingStep == 0 && details.primaryDelta! > 10) {
+            // Only allow closing if we're on the first step
+            setState(() {
+              _showBookingModal = false;
+              _currentBookingStep = 0;
+            });
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
-          border: Border.fromBorderSide(BorderSide(color: Colors.transparent)),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Step indicator
-              StepIndicator(
-                currentStep: _bookingStep,
-                totalSteps: 4,
-                titles: const [
-                  'Ride Type',
-                  'Date & Time',
-                  'Additional Info',
-                  'Confirm'
-                ],
+              // Drag handle
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+                  child: Container(
+                    width: 60,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColor.primaryBlue.withOpacity(0.2),
+                          AppColor.primaryPurple.withOpacity(0.2),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
 
-              const SizedBox(height: 32),
+              // Close button
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16.0, top: 8.0),
+                  child: IconButton(
+                    icon:
+                        const Icon(Icons.close, color: AppColor.textMediumGray),
+                    onPressed: () {
+                      setState(() {
+                        _showBookingModal = false;
+                        _currentBookingStep = 0;
+                        _pickupController.clear();
+                        _destinationController.clear();
+                        _selectedAppointmentType = null;
+                      });
+                    },
+                  ),
+                ),
+              ),
 
-              // Step content
-              _buildStepContent(),
+              // Step indicator
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                child: StepIndicator(
+                  currentStep: _currentBookingStep,
+                  totalSteps: 5,
+                  titles: const [
+                    "Trip Details",
+                    "Ride Type",
+                    "Date & Time",
+                    "Requirements",
+                    "Confirm"
+                  ],
+                ),
+              ),
 
-              const SizedBox(height: 32),
+              // Main content area with animated transitions
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(1.0, 0.0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: SingleChildScrollView(
+                    key: ValueKey<int>(_currentBookingStep),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0, vertical: 12.0),
+                    child: _buildBookingStep(_currentBookingStep),
+                  ),
+                ),
+              ),
 
               // Navigation buttons
-              Row(
-                children: [
-                  // Back button (except for first step)
-                  if (_bookingStep > 0) ...[
-                    Expanded(
-                      child: OutlinedButton(
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Row(
+                  mainAxisAlignment: _currentBookingStep > 0
+                      ? MainAxisAlignment.spaceBetween
+                      : MainAxisAlignment.end,
+                  children: [
+                    // Back button - only shown after first step
+                    if (_currentBookingStep > 0)
+                      OutlinedButton(
                         onPressed: () {
                           setState(() {
-                            _bookingStep--;
+                            _currentBookingStep--;
                           });
                         },
                         style: OutlinedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          side: const BorderSide(
+                            width: 1.5,
+                            color: AppColor.primaryBlue,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 16),
                         ),
-                        child: const Text('Back'),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.arrow_back,
+                                size: 18, color: AppColor.primaryBlue),
+                            SizedBox(width: 8),
+                            Text(
+                              "Back",
+                              style: TextStyle(
+                                color: AppColor.primaryBlue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    // Next/Book button
+                    ElevatedButton(
+                      onPressed: _canProceedToNextStep()
+                          ? () => _handleNextStep()
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        backgroundColor: _currentBookingStep == 4
+                            ? AppColor.primaryPurple
+                            : AppColor.primaryBlue,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 16),
+                        disabledBackgroundColor:
+                            AppColor.textLightGray.withOpacity(0.2),
+                        disabledForegroundColor: AppColor.textLightGray,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_isBookingLoading)
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          else
+                            Text(
+                              _currentBookingStep < 4
+                                  ? "Continue"
+                                  : "Book Ride",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          if (!_isBookingLoading)
+                            Icon(
+                              _currentBookingStep < 4
+                                  ? Icons.arrow_forward
+                                  : Icons.check_circle,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 16),
                   ],
-
-                  // Next/Confirm button
-                  Expanded(
-                    child: GradientButton(
-                      text: _bookingStep < 3 ? 'Next' : 'Confirm Booking',
-                      onPressed: () {
-                        if (_bookingStep < 3) {
-                          setState(() {
-                            _bookingStep++;
-                          });
-                        } else {
-                          // Handle booking confirmation
-                          setState(() {
-                            _showBookingModal = false;
-                            _showRoutePreview = true;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
@@ -625,10 +783,84 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
     );
   }
 
-  Widget _buildStepContent() {
-    switch (_bookingStep) {
+  bool _canProceedToNextStep() {
+    if (_isBookingLoading) return false;
+
+    switch (_currentBookingStep) {
+      case 0: // Trip Details
+        return _pickupController.text.isNotEmpty &&
+            _destinationController.text.isNotEmpty &&
+            _selectedAppointmentType != null;
+      case 1: // Ride Type
+        return _selectedRideType != null;
+      case 2: // Date & Time
+        return _selectedDate != null && _selectedTime != null;
+      case 3: // Requirements
+        return true; // No required fields
+      case 4: // Confirmation
+        return true; // Can always book
+      default:
+        return false;
+    }
+  }
+
+  void _handleNextStep() {
+    if (_currentBookingStep < 4) {
+      setState(() {
+        _currentBookingStep++;
+      });
+    } else {
+      // Handle booking submission
+      setState(() {
+        _isBookingLoading = true;
+      });
+
+      // Simulate booking process
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        setState(() {
+          _isBookingLoading = false;
+          _showBookingSuccessDialog = true;
+        });
+
+        // Hide success dialog after a delay
+        Future.delayed(const Duration(milliseconds: 2000), () {
+          setState(() {
+            _showBookingSuccessDialog = false;
+            _showBookingModal = false;
+            _currentBookingStep = 0;
+            _pickupController.clear();
+            _destinationController.clear();
+            _selectedAppointmentType = null;
+          });
+        });
+      });
+    }
+  }
+
+  Widget _buildBookingStep(int step) {
+    switch (step) {
       case 0:
-        // Ride Type Selection
+        return TripDetailsStep(
+          pickupAddress: _pickupController.text,
+          destinationAddress: _destinationController.text,
+          selectedAppointmentType: _selectedAppointmentType?.name,
+          onAppointmentTypeSelect: (type) {
+            setState(() {
+              _selectedAppointmentType = AppointmentType.values.firstWhere(
+                (t) => t.name == type,
+                orElse: () => AppointmentType.medical,
+              );
+            });
+          },
+          appointmentTypes: AppointmentType.values.map((t) => t.name).toList(),
+          showAppointmentDropdown: _isShowingAppointmentDropdown,
+          onShowAppointmentDropdown: (show) {
+            setState(() {
+              _isShowingAppointmentDropdown = show;
+            });
+          },
+        );
+      case 1:
         return RideTypeStep(
           selectedType: _selectedRideType,
           onTypeSelected: (type) {
@@ -637,9 +869,7 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
             });
           },
         );
-
-      case 1:
-        // Date & Time Selection
+      case 2:
         return DateTimeStep(
           selectedDate: _selectedDate,
           selectedTime: _selectedTime,
@@ -654,9 +884,7 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
             });
           },
         );
-
-      case 2:
-        // Additional Info
+      case 3:
         return AdditionalInfoStep(
           notes: _additionalNotes,
           isRoundTrip: _isRoundTrip,
@@ -689,9 +917,7 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
             });
           },
         );
-
-      case 3:
-        // Confirmation
+      case 4:
         return ConfirmationStep(
           pickupAddress: _pickupController.text,
           destinationAddress: _destinationController.text,
@@ -708,7 +934,6 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
           dropoffLocation: _dropoffLocation,
           routePoints: _routePoints,
         );
-
       default:
         return const SizedBox.shrink();
     }
@@ -1015,4 +1240,324 @@ class DottedLinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class StepIndicator extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+  final List<String> titles;
+
+  const StepIndicator({
+    Key? key,
+    required this.currentStep,
+    required this.totalSteps,
+    required this.titles,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Current step title
+        Text(
+          titles[currentStep],
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: AppColor.textDarkBlue,
+            fontFamily: 'SF Pro Display',
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Progress indicator row
+        Row(
+          children: List.generate(totalSteps, (index) {
+            final isActive = index <= currentStep;
+            final isFirst = index == 0;
+            final isLast = index == totalSteps - 1;
+
+            return Expanded(
+              child: Row(
+                children: [
+                  // Circle indicator
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isActive
+                          ? AppColor.primaryBlue
+                          : Colors.grey.shade300,
+                      border: Border.all(
+                        color: isActive
+                            ? AppColor.primaryBlue
+                            : Colors.grey.shade300,
+                        width: 2,
+                      ),
+                    ),
+                    child: isActive
+                        ? const Icon(
+                            Icons.check,
+                            size: 14,
+                            color: Colors.white,
+                          )
+                        : null,
+                  ),
+
+                  // Line (except for last item)
+                  if (!isLast)
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: index < currentStep
+                            ? AppColor.primaryBlue
+                            : Colors.grey.shade300,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }),
+        ),
+
+        const SizedBox(height: 8),
+
+        // Step labels row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(totalSteps, (index) {
+            final isActive = index <= currentStep;
+            return Text(
+              titles[index],
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                color: isActive ? AppColor.primaryBlue : Colors.grey,
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+// Add TripDetailsStep widget for the first step
+class TripDetailsStep extends StatelessWidget {
+  final String pickupAddress;
+  final String destinationAddress;
+  final String? selectedAppointmentType;
+  final Function(String) onAppointmentTypeSelect;
+  final List<String> appointmentTypes;
+  final bool showAppointmentDropdown;
+  final Function(bool) onShowAppointmentDropdown;
+
+  const TripDetailsStep({
+    Key? key,
+    required this.pickupAddress,
+    required this.destinationAddress,
+    this.selectedAppointmentType,
+    required this.onAppointmentTypeSelect,
+    required this.appointmentTypes,
+    required this.showAppointmentDropdown,
+    required this.onShowAppointmentDropdown,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Trip details header
+        const Text(
+          'Trip Details',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColor.textDarkBlue,
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Origin
+        Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFFE6EFFF),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.my_location,
+                color: AppColor.primaryBlue,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Origin',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColor.textMediumGray,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    pickupAddress.isEmpty ? "Current Location" : pickupAddress,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.textDarkBlue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        // Dotted line
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: SizedBox(
+            height: 24,
+            width: 2,
+            child: CustomPaint(
+              painter: DottedLinePainter(),
+            ),
+          ),
+        ),
+
+        // Destination
+        Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF2EAFF),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.place,
+                color: AppColor.primaryPurple,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Destination',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColor.textMediumGray,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    destinationAddress,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.textDarkBlue,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 32),
+
+        // Appointment Type
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Appointment Type',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColor.textDarkBlue,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => onShowAppointmentDropdown(true),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        selectedAppointmentType ?? 'Select Appointment Type',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: selectedAppointmentType != null
+                              ? AppColor.textDarkBlue
+                              : AppColor.textMediumGray,
+                        ),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down,
+                        color: AppColor.textMediumGray),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // Appointment Type Dropdown
+        if (showAppointmentDropdown)
+          Container(
+            height: 200,
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ListView.builder(
+              itemCount: appointmentTypes.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(appointmentTypes[index]),
+                  onTap: () {
+                    onAppointmentTypeSelect(appointmentTypes[index]);
+                    onShowAppointmentDropdown(false);
+                  },
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
 }
