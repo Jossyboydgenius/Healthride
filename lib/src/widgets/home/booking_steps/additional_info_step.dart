@@ -62,14 +62,14 @@ class AdditionalInfoStep extends StatelessWidget {
                 color: AppColor.primaryPurple.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.fact_check_outlined,
                 color: AppColor.primaryPurple,
                 size: 24,
               ),
             ),
             const SizedBox(width: 12),
-            Text(
+            const Text(
               'Requirements',
               style: TextStyle(
                 fontSize: 18,
@@ -98,14 +98,14 @@ class AdditionalInfoStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
                   Icon(
                     Icons.people,
                     color: AppColor.primaryBlue,
                     size: 24,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Text(
                     'Passengers',
                     style: TextStyle(
@@ -129,13 +129,13 @@ class AdditionalInfoStep extends StatelessWidget {
                           color: AppColor.primaryBlue.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.group,
                           color: AppColor.primaryBlue,
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -146,7 +146,7 @@ class AdditionalInfoStep extends StatelessWidget {
                               color: AppColor.textDarkBlue,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             'Add one additional passenger to your ride',
                             style: TextStyle(
@@ -189,14 +189,14 @@ class AdditionalInfoStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
                   Icon(
                     Icons.description_outlined,
                     color: AppColor.primaryPurple,
                     size: 24,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Text(
                     'Additional Information',
                     style: TextStyle(
@@ -215,32 +215,32 @@ class AdditionalInfoStep extends StatelessWidget {
                   ),
                 onChanged: onNotesChanged,
                 maxLines: 4,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: AppColor.textDarkBlue,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Additional Notes (Optional)',
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     color: AppColor.textMediumGray,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: AppColor.borderColor,
                       width: 1.5,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: AppColor.borderColor,
                       width: 1.5,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: AppColor.primaryPurple,
                       width: 1.5,
                     ),
@@ -253,109 +253,108 @@ class AdditionalInfoStep extends StatelessWidget {
         ),
 
         // Toggle for round trip
-        if (false) // Not visible in the screenshots, but keeping the code in case needed
-          Container(
-            margin: const EdgeInsets.only(top: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: AppColor.primaryPurple.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Icon(
-                            Icons.repeat,
-                            color: AppColor.primaryPurple,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Round Trip',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColor.textDarkBlue,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Schedule a return ride',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.textMediumGray,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Switch(
-                      value: isRoundTrip,
-                      onChanged: onRoundTripChanged,
-                      activeColor: AppColor.primaryPurple,
-                      activeTrackColor: AppColor.primaryPurple.withOpacity(0.3),
-                    ),
-                  ],
-                ),
-                if (isRoundTrip) ...[
-                  const SizedBox(height: 16),
-                  const Divider(height: 1, thickness: 1),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Return Trip Details',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.textDarkBlue,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+        Container(
+          margin: const EdgeInsets.only(top: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: _DateSelector(
-                          label: 'Return Date',
-                          value: DateFormat('MMM d, yyyy').format(returnDate),
-                          onTap: () => _showDatePicker(context),
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColor.primaryPurple.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.repeat,
+                          color: AppColor.primaryPurple,
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Expanded(
-                        child: _TimeSelector(
-                          label: 'Return Time',
-                          value: returnTime ?? 'Select time',
-                          onTap: () => _showTimePicker(context),
-                        ),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Round Trip',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.textDarkBlue,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Schedule a return ride',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColor.textMediumGray,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                  Switch(
+                    value: isRoundTrip,
+                    onChanged: onRoundTripChanged,
+                    activeColor: AppColor.primaryPurple,
+                    activeTrackColor: AppColor.primaryPurple.withOpacity(0.3),
+                  ),
                 ],
+              ),
+              if (isRoundTrip) ...[
+                const SizedBox(height: 16),
+                const Divider(height: 1, thickness: 1),
+                const SizedBox(height: 16),
+                const Text(
+                  'Return Trip Details',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.textDarkBlue,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _DateSelector(
+                        label: 'Return Date',
+                        value: DateFormat('MMM d, yyyy').format(returnDate),
+                        onTap: () => _showDatePicker(context),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _TimeSelector(
+                        label: 'Return Time',
+                        value: returnTime ?? 'Select time',
+                        onTap: () => _showTimePicker(context),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            ),
+            ],
           ),
+        ),
       ],
     );
   }
@@ -369,7 +368,7 @@ class AdditionalInfoStep extends StatelessWidget {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: AppColor.primaryPurple,
               onPrimary: Colors.white,
               surface: Colors.white,
@@ -396,7 +395,7 @@ class AdditionalInfoStep extends StatelessWidget {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: AppColor.primaryPurple,
               onPrimary: Colors.white,
               surface: Colors.white,
@@ -475,7 +474,7 @@ class _DateSelector extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColor.textMediumGray,
               ),
@@ -486,13 +485,13 @@ class _DateSelector extends StatelessWidget {
               children: [
                 Text(
                   value,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColor.textDarkBlue,
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   size: 18,
                   color: AppColor.primaryPurple,
@@ -543,7 +542,7 @@ class _TimeSelector extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColor.textMediumGray,
               ),
@@ -554,13 +553,13 @@ class _TimeSelector extends StatelessWidget {
               children: [
                 Text(
                   value,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColor.textDarkBlue,
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.access_time,
                   size: 18,
                   color: AppColor.primaryPurple,
