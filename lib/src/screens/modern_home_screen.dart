@@ -16,7 +16,6 @@ import '../widgets/home/booking_steps/additional_info_step.dart';
 import '../widgets/home/booking_steps/date_time_step.dart';
 import '../widgets/home/booking_steps/ride_type_step.dart';
 import '../widgets/home/booking_steps/confirmation_step.dart';
-import '../widgets/home/step_indicator.dart';
 import '../widgets/home/route_info_summary.dart';
 import '../widgets/home/health_ride_map.dart';
 import '../widgets/animations/loading_animation.dart';
@@ -28,7 +27,6 @@ import '../screens/profile_screen.dart';
 // Import the necessary packages
 import 'package:flutter/animation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/scheduler.dart';
 
 class ModernHomeScreen extends StatefulWidget {
   const ModernHomeScreen({super.key});
@@ -702,9 +700,9 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 16),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Icon(Icons.arrow_back,
                                 size: 18, color: AppColor.primaryBlue),
                             SizedBox(width: 8),
