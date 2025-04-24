@@ -450,8 +450,8 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE6EFFF),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFE6EFFF),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
