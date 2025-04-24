@@ -38,14 +38,14 @@ class DateTimeStep extends StatelessWidget {
                 color: AppColor.primaryPurple.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.calendar_today,
                 color: AppColor.primaryPurple,
                 size: 24,
               ),
             ),
             const SizedBox(width: 12),
-            Text(
+            const Text(
               'Date & Time',
               style: TextStyle(
                 fontSize: 18,
@@ -68,7 +68,7 @@ class DateTimeStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Quick Select:',
                 style: TextStyle(
                   fontSize: 16,
@@ -93,13 +93,13 @@ class DateTimeStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
                   Icon(
                     Icons.access_time_rounded,
                     color: AppColor.primaryPurple,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     'Select Time',
                     style: TextStyle(
@@ -157,7 +157,7 @@ class DateSelector extends StatelessWidget {
           final isToday = _isSameDay(date, now);
 
           return Padding(
-            padding: EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 8),
             child: DateChip(
               date: date,
               isSelected: isSelected,
@@ -296,7 +296,7 @@ class TimeSelector extends StatelessWidget {
                 color: AppColor.primaryPurple.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.access_time_rounded,
                 color: AppColor.primaryPurple,
                 size: 24,
@@ -314,7 +314,7 @@ class TimeSelector extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Icon(
+            const Icon(
               Icons.keyboard_arrow_down_rounded,
               color: AppColor.textMediumGray,
             ),
@@ -335,7 +335,7 @@ class TimeSelector extends StatelessWidget {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: AppColor.primaryPurple,
               onPrimary: Colors.white,
               surface: Colors.white,
