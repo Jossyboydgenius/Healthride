@@ -30,14 +30,14 @@ class RideTypeStep extends StatelessWidget {
                 color: AppColor.primaryBlue.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.alt_route_rounded,
                 color: AppColor.primaryBlue,
                 size: 24,
               ),
             ),
             const SizedBox(width: 12),
-            Text(
+            const Text(
               'Select Ride Type',
               style: TextStyle(
                 fontSize: 18,
@@ -95,14 +95,14 @@ class RideTypeStep extends StatelessWidget {
             color: AppColor.infoBlue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
+          child: const Row(
             children: [
               Icon(
                 Icons.info_outline,
                 color: AppColor.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Text(
                   'Select the ride type that best fits your needs. All options are covered by your insurance.',
@@ -157,7 +157,7 @@ class _RideTypeOption extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: isSelected
-            ? LinearGradient(
+            ? const LinearGradient(
                 colors: [
                   AppColor.primaryBlue,
                   AppColor.primaryPurple,
@@ -247,7 +247,7 @@ class _RideTypeOption extends StatelessWidget {
                               ),
                       ),
                       child: isSelected
-                          ? Icon(
+                          ? const Icon(
                               Icons.check,
                               color: AppColor.primaryBlue,
                               size: 18,
@@ -280,7 +280,7 @@ class _RideTypeOption extends StatelessWidget {
                     ),
                     child: Text(
                       description,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         color: AppColor.textMediumGray,
                       ),
@@ -298,7 +298,7 @@ class _RideTypeOption extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
@@ -306,7 +306,7 @@ class _RideTypeOption extends StatelessWidget {
                             color: AppColor.primaryBlue,
                             size: 16,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Selected',
                             style: TextStyle(
