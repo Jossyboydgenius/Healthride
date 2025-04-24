@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../constants/app_color.dart';
 import '../../../models/ride_type.dart';
+import '../ride_type_info_dialog.dart';
 
 /// A step for selecting the ride type
 class RideTypeStep extends StatelessWidget {
@@ -58,6 +59,7 @@ class RideTypeStep extends StatelessWidget {
           icon: Icons.directions_car_outlined,
           isSelected: selectedType == RideType.ambulatory,
           onTap: () => onTypeSelected(RideType.ambulatory),
+          rideType: RideType.ambulatory,
         ),
 
         const SizedBox(height: 16),
@@ -71,6 +73,7 @@ class RideTypeStep extends StatelessWidget {
           icon: Icons.accessible_outlined,
           isSelected: selectedType == RideType.wheelchair,
           onTap: () => onTypeSelected(RideType.wheelchair),
+          rideType: RideType.wheelchair,
         ),
 
         const SizedBox(height: 16),
@@ -84,6 +87,7 @@ class RideTypeStep extends StatelessWidget {
           icon: Icons.medical_services_outlined,
           isSelected: selectedType == RideType.stretcher,
           onTap: () => onTypeSelected(RideType.stretcher),
+          rideType: RideType.stretcher,
         ),
 
         const SizedBox(height: 24),
@@ -140,6 +144,9 @@ class _RideTypeOption extends StatelessWidget {
   /// Callback when this option is tapped
   final VoidCallback onTap;
 
+  /// The ride type
+  final RideType rideType;
+
   /// Creates a ride type option
   const _RideTypeOption({
     Key? key,
@@ -149,6 +156,7 @@ class _RideTypeOption extends StatelessWidget {
     required this.icon,
     required this.isSelected,
     required this.onTap,
+    required this.rideType,
   }) : super(key: key);
 
   @override
@@ -232,27 +240,52 @@ class _RideTypeOption extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color:
-                            isSelected ? Colors.white : AppColor.backgroundGray,
-                        border: isSelected
-                            ? null
-                            : Border.all(
-                                color: AppColor.borderColor,
-                                width: 1.5,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.info_outline,
+                            size: 24,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColor.textMediumGray,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => RideTypeInfoDialog(
+                                rideType: rideType,
+                                onDismiss: () => Navigator.of(context).pop(),
                               ),
-                      ),
-                      child: isSelected
-                          ? const Icon(
-                              Icons.check,
-                              color: AppColor.primaryBlue,
-                              size: 18,
-                            )
-                          : null,
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColor.backgroundGray,
+                            border: isSelected
+                                ? null
+                                : Border.all(
+                                    color: AppColor.borderColor,
+                                    width: 1.5,
+                                  ),
+                          ),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  color: AppColor.primaryBlue,
+                                  size: 18,
+                                )
+                              : null,
+                        ),
+                      ],
                     ),
                   ],
                 ),
