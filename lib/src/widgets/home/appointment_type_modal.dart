@@ -172,7 +172,7 @@ class _AppointmentTypeModalState extends State<AppointmentTypeModal> {
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
             child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Text(
                     'Select Appointment Type',
                     style: TextStyle(
@@ -205,13 +205,13 @@ class _AppointmentTypeModalState extends State<AppointmentTypeModal> {
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                // color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(
                     Icons.search,
                     color: Colors.black54,
                   ),
@@ -221,7 +221,7 @@ class _AppointmentTypeModalState extends State<AppointmentTypeModal> {
                     color: Colors.black38,
                     fontSize: 16,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
+                  contentPadding: EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 16,
                   ),
@@ -249,7 +249,7 @@ class _AppointmentTypeModalState extends State<AppointmentTypeModal> {
                       color: const Color(0xFFE1F5FE),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.medical_services_outlined,
                       color: AppColor.primaryBlue,
                       size: 24,
