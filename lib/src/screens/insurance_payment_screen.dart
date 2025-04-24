@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_color.dart';
 import '../models/user.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // Insurance Info model
 class InsuranceInfo {
