@@ -5,7 +5,6 @@ import 'src/repository/auth_repository.dart';
 import 'src/repository/mock_auth_repository.dart';
 import 'src/repository/ride_repository.dart';
 import 'src/repository/mock_ride_repository.dart';
-import 'src/constants/app_color.dart';
 import 'src/routes/app_routes.dart';
 import 'src/theme/app_theme.dart';
 
