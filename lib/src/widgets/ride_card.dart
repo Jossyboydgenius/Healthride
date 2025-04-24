@@ -41,7 +41,7 @@ class RideCard extends StatelessWidget {
                   // Date with icon
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.calendar_today_rounded,
                         size: 16,
                         color: AppColor.primaryPurple,
@@ -49,7 +49,7 @@ class RideCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         _formatDateTime(ride.dateTime),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           color: AppColor.textDarkBlue,
                           fontSize: 13,
@@ -65,7 +65,7 @@ class RideCard extends StatelessWidget {
               // Pickup address
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.adjust_outlined,
                     size: 18,
                     color: AppColor.primaryBlue,
@@ -76,7 +76,7 @@ class RideCard extends StatelessWidget {
                       ride.pickupAddress,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColor.textDarkBlue,
                       ),
                     ),
@@ -87,7 +87,7 @@ class RideCard extends StatelessWidget {
               // Destination address
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.place_outlined,
                     size: 18,
                     color: AppColor.primaryPurple,
@@ -98,7 +98,7 @@ class RideCard extends StatelessWidget {
                       ride.destinationAddress,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColor.textDarkBlue,
                       ),
                     ),
