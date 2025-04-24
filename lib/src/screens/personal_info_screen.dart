@@ -322,8 +322,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen>
                       ),
                     ],
                   ),
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Icon(
                         Icons.check_circle,
                         color: Colors.white,
