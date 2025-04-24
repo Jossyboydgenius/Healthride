@@ -157,6 +157,11 @@ class BookingModal extends StatefulWidget {
 }
 
 class _BookingModalState extends State<BookingModal> {
+  int _currentStep = 0;
+  String? _selectedAppointmentType;
+  String? _selectedPaymentMethod;
+  bool _isLoading = false;
+
   // Track the drag progress
   double _dragProgress = 0.0;
 
@@ -174,11 +179,58 @@ class _BookingModalState extends State<BookingModal> {
   final double _maxSheetHeight = 0.9;
 
   @override
+  void initState() {
+    super.initState();
+    _selectedAppointmentType = widget.selectedAppointmentType?.name;
+  }
+
+  void _onAppointmentTypeSelect(String type) {
+    setState(() {
+      _selectedAppointmentType = type;
+    });
+  }
+
+  void _onPaymentMethodSelect(String method) {
+    setState(() {
+      _selectedPaymentMethod = method;
+    });
+  }
+
+  void _onNextPressed() {
+    setState(() {
+      if (_currentStep < 2) {
+        _currentStep++;
+      }
+    });
+  }
+
+  void _onBackPressed() {
+    setState(() {
+      if (_currentStep > 0) {
+        _currentStep--;
+      }
+    });
+  }
+
+  void _onConfirmBooking() {
+    setState(() {
+      _isLoading = true;
+    });
+    // TODO: Implement booking confirmation
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _isLoading = false;
+      });
+      widget.onClose();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     // Get the current step height or default to 0.6
-    final baseSheetHeightFraction = _stepHeights[widget.currentStep] ?? 0.6;
+    final baseSheetHeightFraction = _stepHeights[_currentStep] ?? 0.6;
 
     // Calculate sheet height based on drag progress
     final sheetHeightFraction = _dragProgress > 0
@@ -212,7 +264,7 @@ class _BookingModalState extends State<BookingModal> {
           // Close modal if dragged down significantly
           if (details.primaryDelta! > 12 &&
               _dragProgress < 0.1 &&
-              widget.currentStep == 0) {
+              _currentStep == 0) {
             widget.onClose();
           }
         },
@@ -287,7 +339,7 @@ class _BookingModalState extends State<BookingModal> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
                 child: StepIndicator(
-                  currentStep: widget.currentStep,
+                  currentStep: _currentStep,
                   totalSteps: 5,
                   titles: const [
                     "Trip Details",
@@ -317,7 +369,7 @@ class _BookingModalState extends State<BookingModal> {
                     );
                   },
                   child: SingleChildScrollView(
-                    key: ValueKey<int>(widget.currentStep),
+                    key: ValueKey<int>(_currentStep),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24.0, vertical: 12.0),
                     child: _buildBookingStep(),
@@ -329,52 +381,22 @@ class _BookingModalState extends State<BookingModal> {
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Row(
-                  mainAxisAlignment: widget.currentStep > 0
+                  mainAxisAlignment: _currentStep > 0
                       ? MainAxisAlignment.spaceBetween
                       : MainAxisAlignment.end,
                   children: [
                     // Back button - only shown after first step
-                    if (widget.currentStep > 0)
-                      OutlinedButton(
-                        onPressed: widget.onBackPressed,
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          side: const BorderSide(
-                            width: 1.5,
-                            color: AppColor.primaryBlue,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 16),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.arrow_back,
-                                size: 18, color: AppColor.primaryBlue),
-                            SizedBox(width: 8),
-                            Text(
-                              "Back",
-                              style: TextStyle(
-                                color: AppColor.primaryBlue,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    if (_currentStep > 0) BackButton(onPressed: _onBackPressed),
 
                     // Next/Book button
                     ElevatedButton(
                       onPressed:
-                          _canProceedToNextStep() ? widget.onNextPressed : null,
+                          _canProceedToNextStep() ? _onNextPressed : null,
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        backgroundColor: widget.currentStep == 4
+                        backgroundColor: _currentStep == 4
                             ? AppColor.primaryPurple
                             : AppColor.primaryBlue,
                         padding: const EdgeInsets.symmetric(
@@ -386,7 +408,7 @@ class _BookingModalState extends State<BookingModal> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (widget.isLoading)
+                          if (_isLoading)
                             const SizedBox(
                               width: 20,
                               height: 20,
@@ -397,7 +419,7 @@ class _BookingModalState extends State<BookingModal> {
                             )
                           else
                             Text(
-                              widget.currentStep < 4 ? "Continue" : "Book Ride",
+                              _currentStep < 4 ? "Continue" : "Book Ride",
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -405,9 +427,9 @@ class _BookingModalState extends State<BookingModal> {
                               ),
                             ),
                           const SizedBox(width: 8),
-                          if (!widget.isLoading)
+                          if (!_isLoading)
                             Icon(
-                              widget.currentStep < 4
+                              _currentStep < 4
                                   ? Icons.arrow_forward
                                   : Icons.check_circle,
                               size: 18,
@@ -427,13 +449,13 @@ class _BookingModalState extends State<BookingModal> {
   }
 
   bool _canProceedToNextStep() {
-    if (widget.isLoading) return false;
+    if (_isLoading) return false;
 
-    switch (widget.currentStep) {
+    switch (_currentStep) {
       case 0: // Trip Details
         return widget.pickupAddress.isNotEmpty &&
             widget.destinationAddress.isNotEmpty &&
-            widget.selectedAppointmentType != null;
+            _selectedAppointmentType != null;
       case 1: // Ride Type
         return widget.selectedRideType != null;
       case 2: // Date & Time
@@ -448,16 +470,13 @@ class _BookingModalState extends State<BookingModal> {
   }
 
   Widget _buildBookingStep() {
-    switch (widget.currentStep) {
+    switch (_currentStep) {
       case 0:
         return TripDetailsStep(
-          pickupAddress: widget.pickupAddress,
-          destinationAddress: widget.destinationAddress,
-          selectedAppointmentType: widget.selectedAppointmentType?.name,
-          onAppointmentTypeSelect: widget.onAppointmentTypeSelect,
-          appointmentTypes: AppointmentType.values.map((t) => t.name).toList(),
-          showAppointmentDropdown: widget.showAppointmentDropdown,
-          onShowAppointmentDropdown: widget.onShowAppointmentDropdown,
+          selectedAppointmentType: _selectedAppointmentType,
+          onAppointmentTypeSelect: _onAppointmentTypeSelect,
+          onBack: _onBackPressed,
+          onNext: _onNextPressed,
         );
       case 1:
         return RideTypeStep(
@@ -509,23 +528,17 @@ class _BookingModalState extends State<BookingModal> {
 
 /// Widget to display the trip details step of the booking process
 class TripDetailsStep extends StatelessWidget {
-  final String pickupAddress;
-  final String destinationAddress;
   final String? selectedAppointmentType;
   final Function(String) onAppointmentTypeSelect;
-  final List<String> appointmentTypes;
-  final bool showAppointmentDropdown;
-  final Function(bool) onShowAppointmentDropdown;
+  final VoidCallback onBack;
+  final VoidCallback onNext;
 
   const TripDetailsStep({
     Key? key,
-    required this.pickupAddress,
-    required this.destinationAddress,
-    this.selectedAppointmentType,
+    required this.selectedAppointmentType,
     required this.onAppointmentTypeSelect,
-    required this.appointmentTypes,
-    required this.showAppointmentDropdown,
-    required this.onShowAppointmentDropdown,
+    required this.onBack,
+    required this.onNext,
   }) : super(key: key);
 
   @override
@@ -574,7 +587,7 @@ class TripDetailsStep extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    pickupAddress.isEmpty ? "Current Location" : pickupAddress,
+                    "Current Location",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -629,7 +642,7 @@ class TripDetailsStep extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    destinationAddress,
+                    "Destination",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -722,91 +735,189 @@ class StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Current step title
-        Text(
-          titles[currentStep],
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: AppColor.textDarkBlue,
-            fontFamily: 'SF Pro Display',
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                titles[currentStep],
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColor.primaryBlue.withOpacity(0.1),
+                      AppColor.primaryPurple.withOpacity(0.1),
+                    ],
+                  ),
+                ),
+                child: Text(
+                  '${currentStep + 1}/$totalSteps',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.primaryPurple,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            height: 8,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              color: Colors.grey.withOpacity(0.1),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: constraints.maxWidth *
+                          ((currentStep + 1) / totalSteps),
+                      height: 8,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColor.primaryBlue,
+                            AppColor.primaryPurple,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BackButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const BackButton({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        border: GradientBoxBorder(
+          gradient: LinearGradient(
+            colors: [
+              AppColor.primaryBlue,
+              AppColor.primaryPurple,
+            ],
+          ),
+          width: 1.5,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(30),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.arrow_back,
+                  color: AppColor.primaryBlue,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Back',
+                  style: TextStyle(
+                    color: AppColor.primaryBlue,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
 
-        const SizedBox(height: 16),
+// Helper class for gradient border
+class GradientBoxBorder extends BoxBorder {
+  final Gradient gradient;
+  final double width;
 
-        // Progress indicator row
-        Row(
-          children: List.generate(totalSteps, (index) {
-            final isActive = index <= currentStep;
-            final isFirst = index == 0;
-            final isLast = index == totalSteps - 1;
+  const GradientBoxBorder({
+    required this.gradient,
+    this.width = 1.0,
+  });
 
-            return Expanded(
-              child: Row(
-                children: [
-                  // Circle indicator
-                  Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isActive
-                          ? AppColor.primaryBlue
-                          : Colors.grey.shade300,
-                      border: Border.all(
-                        color: isActive
-                            ? AppColor.primaryBlue
-                            : Colors.grey.shade300,
-                        width: 2,
-                      ),
-                    ),
-                    child: isActive
-                        ? const Icon(
-                            Icons.check,
-                            size: 14,
-                            color: Colors.white,
-                          )
-                        : null,
-                  ),
+  @override
+  BorderSide get top => BorderSide.none;
 
-                  // Line (except for last item)
-                  if (!isLast)
-                    Expanded(
-                      child: Container(
-                        height: 2,
-                        color: index < currentStep
-                            ? AppColor.primaryBlue
-                            : Colors.grey.shade300,
-                      ),
-                    ),
-                ],
-              ),
-            );
-          }),
-        ),
+  @override
+  BorderSide get right => BorderSide.none;
 
-        const SizedBox(height: 8),
+  @override
+  BorderSide get bottom => BorderSide.none;
 
-        // Step labels row
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(totalSteps, (index) {
-            final isActive = index <= currentStep;
-            return Text(
-              titles[index],
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                color: isActive ? AppColor.primaryBlue : Colors.grey,
-              ),
-            );
-          }),
-        ),
-      ],
+  @override
+  BorderSide get left => BorderSide.none;
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(width);
+
+  @override
+  bool get isUniform => true;
+
+  @override
+  void paint(
+    Canvas canvas,
+    Rect rect, {
+    TextDirection? textDirection,
+    BoxShape shape = BoxShape.rectangle,
+    BorderRadius? borderRadius,
+  }) {
+    final Paint paint = Paint()
+      ..shader = gradient.createShader(rect)
+      ..strokeWidth = width
+      ..style = PaintingStyle.stroke;
+
+    final RRect rrect =
+        borderRadius?.toRRect(rect) ?? RRect.fromRectXY(rect, 0, 0);
+    canvas.drawRRect(rrect, paint);
+  }
+
+  @override
+  ShapeBorder scale(double t) {
+    return GradientBoxBorder(
+      gradient: gradient,
+      width: width * t,
     );
   }
 }
