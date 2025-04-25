@@ -141,6 +141,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         title: const Text(
           'Notifications',
           style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.w600,
             color: AppColor.textDarkBlue,
           ),
@@ -151,7 +152,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           icon: const Icon(Icons.arrow_back),
           color: AppColor.textDarkBlue,
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacementNamed('/home');
           },
         ),
         actions: [
