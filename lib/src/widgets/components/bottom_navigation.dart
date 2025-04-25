@@ -90,7 +90,7 @@ class HealthRideBottomNavigation extends StatelessWidget {
                       color: isSelected
                           ? AppColor.primaryBlue
                           : AppColor.textMediumGray,
-                      fontFamily: 'SF Pro Display',
+                      fontFamily: 'Poppins',
                     ),
                   ),
                 ],
