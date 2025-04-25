@@ -46,7 +46,7 @@ class DateTimeStep extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Date & Time',
+              'Select Date',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
