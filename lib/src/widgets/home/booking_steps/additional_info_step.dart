@@ -70,7 +70,7 @@ class AdditionalInfoStep extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Requirements',
+              'Fill in your requirements',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
