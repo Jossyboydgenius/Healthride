@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 /// App color constants based on the original HealthRide Jetpack Compose theme
 class AppColor {
   // Primary colors
-  static const Color primaryBlue = Color(0xFF4F6BED);
-  static const Color primaryPurple = Color(0xFF8776D7);
+  static const Color primaryBlue = Color(0xFF0080FF);
+  static const Color primaryPurple = Color(0xFF7C3AED);
   static const Color primaryBlueLight = Color(0xFFE6ECFD);
   static const Color primaryPurpleLight = Color(0xFFF2EAFF);
 
