@@ -117,6 +117,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen>
         title: const Text(
           'Personal Information',
           style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.w600,
             color: AppColor.textDarkBlue,
           ),
