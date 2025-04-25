@@ -75,6 +75,7 @@ class _SettingsSupportScreenState extends State<SettingsSupportScreen> {
         title: const Text(
           'Settings & Support',
           style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.w600,
             color: AppColor.textDarkBlue,
           ),
