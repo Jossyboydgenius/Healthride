@@ -309,7 +309,7 @@ class _AddressSearchBarState extends State<AddressSearchBar>
                 style: TextStyle(
                   fontSize: 16,
                   color: AppColor.textMediumGray.withOpacity(0.7),
-                  fontFamily: 'SF Pro Display',
+                  fontFamily: 'Poppins',
                 ),
               ),
             ),
