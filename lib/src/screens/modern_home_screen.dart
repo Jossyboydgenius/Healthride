@@ -510,7 +510,7 @@ class _ModernHomeScreenState extends State<ModernHomeScreen> {
                           thickness: 1,
                           indent: 16, // Start from left edge
                           endIndent: 16, // Don't reach right edge
-                          color: Color(0xFFE5E7EB),
+                          color: Color(0xFFF0F0FF),
                         ),
                     ],
                   ],
