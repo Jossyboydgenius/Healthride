@@ -173,6 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         title: const Text(
           'Profile',
           style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.w600,
             color: AppColor.textDarkBlue,
           ),
@@ -340,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: AppColor.textDarkBlue,
-            fontFamily: "SF Pro Display",
+            fontFamily: "Poppins",
           ),
         ),
 
@@ -361,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               style: const TextStyle(
                 fontSize: 14,
                 color: AppColor.textMediumGray,
-                fontFamily: "SF Pro Display",
+                fontFamily: "Poppins",
               ),
             ),
           ],
@@ -428,7 +429,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: textColor,
-              fontFamily: "SF Pro Display",
+              fontFamily: "Poppins",
             ),
           ),
         ],
