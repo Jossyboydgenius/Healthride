@@ -198,7 +198,7 @@ class _BookingModalState extends State<BookingModal> {
 
   void _onNextPressed() {
     setState(() {
-      if (_currentStep < 2) {
+      if (_currentStep < 4) {
         _currentStep++;
       }
     });
@@ -548,7 +548,7 @@ class TripDetailsStep extends StatelessWidget {
       children: [
         // Trip details header
         const Text(
-          'Trip Details',
+          'Check your trip details',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -574,21 +574,21 @@ class TripDetailsStep extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Origin',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColor.textMediumGray,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     "Current Location",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColor.textDarkBlue,
@@ -629,21 +629,21 @@ class TripDetailsStep extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Destination',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColor.textMediumGray,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     "Destination",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColor.textDarkBlue,
@@ -749,6 +749,7 @@ class StepIndicator extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
+                  color: AppColor.textDarkBlue,
                 ),
               ),
               Container(
@@ -765,7 +766,7 @@ class StepIndicator extends StatelessWidget {
                 ),
                 child: Text(
                   '${currentStep + 1}/$totalSteps',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColor.primaryPurple,
@@ -792,7 +793,7 @@ class StepIndicator extends StatelessWidget {
                       height: 8,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
                             AppColor.primaryBlue,
                             AppColor.primaryPurple,
@@ -824,7 +825,7 @@ class BackButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        border: GradientBoxBorder(
+        border: const GradientBoxBorder(
           gradient: LinearGradient(
             colors: [
               AppColor.primaryBlue,
@@ -841,7 +842,7 @@ class BackButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
@@ -849,7 +850,7 @@ class BackButton extends StatelessWidget {
                   color: AppColor.primaryBlue,
                   size: 18,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   'Back',
                   style: TextStyle(
