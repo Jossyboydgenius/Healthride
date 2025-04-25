@@ -8,6 +8,7 @@ class AppTheme {
   static ThemeData get themeData {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Poppins',
       colorScheme: _colorScheme,
       textTheme: AppTypography.textTheme,
       appBarTheme: _appBarTheme,
@@ -45,6 +46,7 @@ class AppTheme {
       centerTitle: true,
       iconTheme: IconThemeData(color: AppColor.textDarkBlue),
       titleTextStyle: TextStyle(
+        fontFamily: 'Poppins',
         fontSize: 18.0,
         fontWeight: FontWeight.w600,
         color: AppColor.textDarkBlue,
@@ -65,6 +67,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(28.0),
         ),
         textStyle: const TextStyle(
+          fontFamily: 'Poppins',
           fontSize: 16.0,
           fontWeight: FontWeight.w600,
         ),
@@ -84,6 +87,7 @@ class AppTheme {
         ),
         side: const BorderSide(color: AppColor.primaryBlue, width: 1.5),
         textStyle: const TextStyle(
+          fontFamily: 'Poppins',
           fontSize: 16.0,
           fontWeight: FontWeight.w600,
         ),
@@ -114,8 +118,14 @@ class AppTheme {
         borderRadius: BorderRadius.circular(16.0),
         borderSide: const BorderSide(color: AppColor.errorRed),
       ),
-      labelStyle: const TextStyle(color: AppColor.textMediumGray),
-      hintStyle: const TextStyle(color: AppColor.textLightGray),
+      labelStyle: const TextStyle(
+        fontFamily: 'Poppins',
+        color: AppColor.textMediumGray,
+      ),
+      hintStyle: const TextStyle(
+        fontFamily: 'Poppins',
+        color: AppColor.textLightGray,
+      ),
     );
   }
 
