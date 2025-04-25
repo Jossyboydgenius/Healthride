@@ -41,6 +41,59 @@ class ConfirmationStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Ready to Book container
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: const Color(0xFFECFCF4),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF10B981),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Ready to Book',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF10B981),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Please review your ride details',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
         const Text(
           'Ride Summary',
           style: TextStyle(
@@ -207,10 +260,11 @@ class ConfirmationStep extends StatelessWidget {
                             color: AppColor.textDarkBlue,
                           ),
                         ),
+                        SizedBox(height: 4),
                         Text(
                           'This ride is covered by your insurance',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             color: AppColor.textMediumGray,
                           ),
                         ),
@@ -233,20 +287,11 @@ class ConfirmationStep extends StatelessWidget {
     required String address,
   }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: 20,
-          ),
+        Icon(
+          icon,
+          color: iconColor,
+          size: 20,
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -256,7 +301,7 @@ class ConfirmationStep extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: AppColor.textMediumGray,
                 ),
               ),
@@ -264,8 +309,8 @@ class ConfirmationStep extends StatelessWidget {
               Text(
                 address,
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                   color: AppColor.textDarkBlue,
                 ),
               ),
@@ -283,18 +328,10 @@ class ConfirmationStep extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: AppColor.primaryBlue,
-            size: 20,
-          ),
+        Icon(
+          icon,
+          color: AppColor.primaryBlue,
+          size: 20,
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -304,7 +341,7 @@ class ConfirmationStep extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: AppColor.textMediumGray,
                 ),
               ),
@@ -312,8 +349,8 @@ class ConfirmationStep extends StatelessWidget {
               Text(
                 info,
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                   color: AppColor.textDarkBlue,
                 ),
               ),
@@ -325,13 +362,12 @@ class ConfirmationStep extends StatelessWidget {
   }
 
   LatLng _calculateCenter() {
-    if (pickupLocation == null || dropoffLocation == null) {
-      return const LatLng(0, 0);
+    if (pickupLocation != null && dropoffLocation != null) {
+      return LatLng(
+        (pickupLocation!.latitude + dropoffLocation!.latitude) / 2,
+        (pickupLocation!.longitude + dropoffLocation!.longitude) / 2,
+      );
     }
-
-    return LatLng(
-      (pickupLocation!.latitude + dropoffLocation!.latitude) / 2,
-      (pickupLocation!.longitude + dropoffLocation!.longitude) / 2,
-    );
+    return pickupLocation ?? dropoffLocation ?? const LatLng(0, 0);
   }
 }
