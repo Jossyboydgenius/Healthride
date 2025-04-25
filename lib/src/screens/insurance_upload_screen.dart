@@ -131,7 +131,14 @@ class _InsuranceUploadScreenState extends State<InsuranceUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Insurance Verification'),
+        title: const Text(
+          'Insurance Verification',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColor.textDarkBlue,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
