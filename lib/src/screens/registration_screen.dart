@@ -106,6 +106,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: AppColor.textDarkBlue,
+            fontFamily: 'Poppins',
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -145,6 +146,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppColor.textDarkBlue,
+                  fontFamily: 'Poppins',
                 ),
               ),
             ),
@@ -165,6 +167,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   style: const TextStyle(
                     color: AppColor.errorRed,
                     fontSize: 14,
+                    fontFamily: 'Poppins',
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -266,6 +269,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: isActive ? AppColor.primaryBlue : Colors.white,
+                        fontFamily: 'Poppins',
                       ),
                     ),
                   ),
@@ -310,6 +314,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.textMediumGray,
+            fontFamily: 'Poppins',
           ),
         ),
         const SizedBox(height: 24),
@@ -399,6 +404,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.textMediumGray,
+            fontFamily: 'Poppins',
           ),
         ),
         const SizedBox(height: 24),
@@ -501,6 +507,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.textMediumGray,
+            fontFamily: 'Poppins',
           ),
         ),
         const SizedBox(height: 24),
@@ -637,6 +644,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.textMediumGray,
+            fontFamily: 'Poppins',
           ),
         ),
         const SizedBox(height: 24),
@@ -707,6 +715,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             style: TextStyle(
               fontSize: 14,
               color: AppColor.textMediumGray,
+              fontFamily: 'Poppins',
             ),
             textAlign: TextAlign.center,
           ),
