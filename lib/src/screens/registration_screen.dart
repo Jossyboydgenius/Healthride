@@ -23,6 +23,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _cityController = TextEditingController();
   final _stateController = TextEditingController();
   final _zipController = TextEditingController();
+  final _insuranceProviderController = TextEditingController();
+  final _policyNumberController = TextEditingController();
 
   // Current step in the registration process
   int _currentStep = 0;
@@ -31,7 +33,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? _errorMessage;
 
   // List of steps in the registration process
-  final List<String> _steps = ['Account', 'Personal', 'Address', 'Review'];
+  final List<String> _stepTitles = [
+    'Personal Information',
+    'Set Up Your Account',
+    'Add Your Address',
+    'Insurance Information'
+  ];
 
   @override
   void dispose() {
@@ -44,11 +51,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _cityController.dispose();
     _stateController.dispose();
     _zipController.dispose();
+    _insuranceProviderController.dispose();
+    _policyNumberController.dispose();
     super.dispose();
   }
 
   void _nextStep() {
-    if (_currentStep < _steps.length - 1) {
+    if (_currentStep < _stepTitles.length - 1) {
       setState(() {
         _currentStep += 1;
       });
@@ -91,7 +100,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       backgroundColor: AppColor.backgroundGray,
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: const Text(
+          'Create Your Account',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColor.textDarkBlue,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -114,7 +130,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_steps.length, (index) {
+                children: List.generate(_stepTitles.length, (index) {
                   return _buildStepIndicator(index);
                 }),
               ),
@@ -124,7 +140,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 24.0),
               child: Text(
-                _steps[_currentStep],
+                _stepTitles[_currentStep],
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -184,7 +200,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   if (_currentStep > 0) const SizedBox(width: 16.0),
                   Expanded(
                     child: GradientButton(
-                      text: _currentStep == _steps.length - 1
+                      text: _currentStep == _stepTitles.length - 1
                           ? 'Create Account'
                           : 'Next',
                       onPressed: !_isLoading ? _nextStep : () {},
@@ -219,10 +235,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
 
-          // Circle indicator
+          // Circle indicator with number
           Container(
-            width: 24,
-            height: 24,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isCompleted
@@ -236,16 +252,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             child: isCompleted
-                ? const Icon(
-                    Icons.check,
-                    size: 16,
-                    color: Colors.white,
+                ? const Center(
+                    child: Icon(
+                      Icons.check,
+                      size: 20,
+                      color: Colors.white,
+                    ),
                   )
-                : null,
+                : Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? AppColor.primaryBlue : Colors.white,
+                      ),
+                    ),
+                  ),
           ),
 
           // Line after (except for last item)
-          if (index < _steps.length - 1)
+          if (index < _stepTitles.length - 1)
             Expanded(
               child: Container(
                 height: 2,
@@ -262,13 +289,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget _buildCurrentStep() {
     switch (_currentStep) {
       case 0:
-        return _buildAccountStep();
-      case 1:
         return _buildPersonalStep();
+      case 1:
+        return _buildAccountStep();
       case 2:
         return _buildAddressStep();
       case 3:
-        return _buildReviewStep();
+        return _buildInsuranceStep();
       default:
         return Container();
     }
@@ -601,12 +628,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Widget _buildReviewStep() {
+  Widget _buildInsuranceStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Review your information',
+          'Insurance Information',
           style: TextStyle(
             fontSize: 16,
             color: AppColor.textMediumGray,
@@ -614,96 +641,78 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
         const SizedBox(height: 24),
 
-        // Review sections
-        _buildReviewSection(
-          title: 'Account Information',
-          items: [
-            'Email: ${_emailController.text}',
-            'Password: ********',
-          ],
-          onEdit: () => setState(() => _currentStep = 0),
+        // Insurance Provider field
+        TextField(
+          controller: _insuranceProviderController,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            labelText: 'Insurance Provider',
+            hintText: 'Enter your insurance provider',
+            prefixIcon: const Icon(
+              Icons.shield_outlined,
+              color: AppColor.primaryBlue,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppColor.primaryBlue),
+            ),
+          ),
+          textInputAction: TextInputAction.next,
         ),
-
-        _buildReviewSection(
-          title: 'Personal Information',
-          items: [
-            'Name: ${_firstNameController.text} ${_lastNameController.text}',
-            'Phone: ${_phoneController.text}',
-          ],
-          onEdit: () => setState(() => _currentStep = 1),
-        ),
-
-        _buildReviewSection(
-          title: 'Address',
-          items: [
-            _addressController.text,
-            '${_cityController.text}, ${_stateController.text} ${_zipController.text}',
-          ],
-          onEdit: () => setState(() => _currentStep = 2),
-          isLast: true,
-        ),
-
         const SizedBox(height: 16),
 
-        // Terms agreement
-        Row(
-          children: [
-            Checkbox(
-              value: true,
-              onChanged: (value) {},
-              activeColor: AppColor.primaryBlue,
+        // Policy Number field
+        TextField(
+          controller: _policyNumberController,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            labelText: 'Policy Number',
+            hintText: 'Enter your policy number',
+            prefixIcon: const Icon(
+              Icons.pin_outlined,
+              color: AppColor.primaryBlue,
             ),
-            const Expanded(
-              child: Text(
-                'I agree to the Terms of Service and Privacy Policy',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColor.textMediumGray,
-                ),
-              ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
             ),
-          ],
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppColor.primaryBlue),
+            ),
+          ),
+          textInputAction: TextInputAction.done,
+        ),
+        const SizedBox(height: 24),
+
+        // Note about next steps
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            "Note: You'll be asked to upload your insurance card and ID in the next step.",
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColor.textMediumGray,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
 
         const SizedBox(height: 24),
-      ],
-    );
-  }
-
-  Widget _buildReviewSection({
-    required String title,
-    required List<String> items,
-    required VoidCallback onEdit,
-    bool isLast = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColor.textDarkBlue,
-              ),
-            ),
-            TextButton(
-              onPressed: onEdit,
-              child: const Text('Edit'),
-            ),
-          ],
-        ),
-        ...items.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                item,
-                style: const TextStyle(color: AppColor.textDarkBlue),
-              ),
-            )),
-        if (!isLast) const Divider(height: 32),
       ],
     );
   }
