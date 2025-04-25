@@ -196,6 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: AppColor.textDarkBlue,
+            fontFamily: 'Poppins',
           ),
         ),
 
@@ -206,6 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: TextStyle(
             fontSize: 16,
             color: AppColor.textMediumGray,
+            fontFamily: 'Poppins',
           ),
         ),
       ],
@@ -231,6 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: const TextStyle(
                 color: AppColor.errorRed,
                 fontSize: 14,
+                fontFamily: 'Poppins',
               ),
               textAlign: TextAlign.center,
             ),
@@ -319,6 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(
                 color: AppColor.primaryBlue,
                 fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins',
               ),
             ),
           ),
@@ -345,6 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
           "Don't have an account?",
           style: TextStyle(
             color: AppColor.textMediumGray,
+            fontFamily: 'Poppins',
           ),
         ),
         TextButton(
@@ -356,6 +361,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(
               color: AppColor.primaryBlue,
               fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
             ),
           ),
         ),
