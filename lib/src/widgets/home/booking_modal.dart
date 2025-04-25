@@ -10,7 +10,6 @@ import 'booking_steps/confirmation_step.dart';
 import 'dotted_line_painter.dart';
 import 'appointment_type_modal.dart';
 import 'booking_progress_dialog.dart';
-import 'booking_success_dialog.dart';
 
 /// A draggable bottom sheet for booking rides with multi-step flow
 class BookingModal extends StatefulWidget {
