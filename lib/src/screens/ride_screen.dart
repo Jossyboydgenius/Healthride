@@ -119,6 +119,7 @@ class _RideScreenState extends State<RideScreen>
         title: const Text(
           'My Rides',
           style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.w600,
             color: AppColor.textDarkBlue,
           ),
@@ -198,6 +199,7 @@ class _RideScreenState extends State<RideScreen>
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: Colors.white,
+          border: Border.all(color: Colors.grey.shade300),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
