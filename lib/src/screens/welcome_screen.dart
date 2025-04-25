@@ -132,6 +132,7 @@ class WelcomeScreen extends StatelessWidget {
             fontSize: 34,
             fontWeight: FontWeight.bold,
             color: AppColor.textDarkBlue,
+            fontFamily: 'Poppins',
           ),
         ),
 
@@ -144,6 +145,7 @@ class WelcomeScreen extends StatelessWidget {
             fontSize: 18,
             color: AppColor.textMediumGray,
             height: 1.4,
+            fontFamily: 'Poppins',
           ),
         ),
       ],
@@ -195,6 +197,7 @@ class WelcomeScreen extends StatelessWidget {
               fontSize: 16,
               color: AppColor.textDarkBlue,
               fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
             ),
           ),
         ),
