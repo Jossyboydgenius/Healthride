@@ -119,45 +119,52 @@ class AdditionalInfoStep extends StatelessWidget {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.group,
-                          color: AppColor.primaryBlue,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Bring a Companion',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.textDarkBlue,
-                            ),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: AppColor.primaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Add one additional passenger to your ride',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColor.textMediumGray,
-                            ),
+                          child: const Icon(
+                            Icons.group,
+                            color: AppColor.primaryBlue,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(width: 16),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Bring a Companion',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.textDarkBlue,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Add one additional passenger to your ride',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColor.textMediumGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Switch(
                     value: hasCompanion,
                     onChanged: onCompanionChanged,
@@ -272,45 +279,52 @@ class AdditionalInfoStep extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryPurple.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.repeat,
-                          color: AppColor.primaryPurple,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Round Trip',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.textDarkBlue,
-                            ),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: AppColor.primaryPurple.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Schedule a return ride',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColor.textMediumGray,
-                            ),
+                          child: const Icon(
+                            Icons.repeat,
+                            color: AppColor.primaryPurple,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(width: 16),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Round Trip',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.textDarkBlue,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Schedule a return ride',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColor.textMediumGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Switch(
                     value: isRoundTrip,
                     onChanged: onRoundTripChanged,
@@ -321,7 +335,8 @@ class AdditionalInfoStep extends StatelessWidget {
               ),
               if (isRoundTrip) ...[
                 const SizedBox(height: 16),
-                const Divider(height: 1, thickness: 1),
+                const Divider(
+                    height: 1, thickness: 1, color: AppColor.borderColor),
                 const SizedBox(height: 16),
                 const Text(
                   'Return Trip Details',
