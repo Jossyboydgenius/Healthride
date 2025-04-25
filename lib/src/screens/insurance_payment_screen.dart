@@ -115,7 +115,7 @@ class _InsurancePaymentScreenState extends State<InsurancePaymentScreen>
             _selectedSection == 0 ? 'Insurance Information' : 'Payment Methods',
             style: const TextStyle(
               color: AppColor.textDarkBlue,
-              fontSize: 18,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
