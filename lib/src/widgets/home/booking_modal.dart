@@ -9,6 +9,8 @@ import 'booking_steps/ride_type_step.dart';
 import 'booking_steps/confirmation_step.dart';
 import 'dotted_line_painter.dart';
 import 'appointment_type_modal.dart';
+import 'booking_progress_dialog.dart';
+import 'booking_success_dialog.dart';
 
 /// A draggable bottom sheet for booking rides with multi-step flow
 class BookingModal extends StatefulWidget {
@@ -197,11 +199,14 @@ class _BookingModalState extends State<BookingModal> {
   }
 
   void _onNextPressed() {
-    setState(() {
-      if (_currentStep < 4) {
+    if (_currentStep < 4) {
+      setState(() {
         _currentStep++;
-      }
-    });
+      });
+    } else if (_currentStep == 4) {
+      // If we're on the confirmation step, show the booking progress dialog
+      _showBookingProgressDialog(context);
+    }
   }
 
   void _onBackPressed() {
@@ -223,6 +228,23 @@ class _BookingModalState extends State<BookingModal> {
       });
       widget.onClose();
     });
+  }
+
+  // Method to show the booking progress dialog
+  void _showBookingProgressDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return BookingProgressDialog(
+          onBookingComplete: () {
+            // This is now handled inside the BookingProgressDialog
+            // which will show the success dialog directly
+            widget.onClose();
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -401,39 +423,33 @@ class _BookingModalState extends State<BookingModal> {
                             : AppColor.primaryBlue,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 16),
-                        disabledBackgroundColor:
-                            AppColor.textLightGray.withOpacity(0.2),
-                        disabledForegroundColor: AppColor.textLightGray,
+                        disabledBackgroundColor: Colors.grey.withOpacity(0.3),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (_isLoading)
-                            const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          else
-                            Text(
-                              _currentStep < 4 ? "Continue" : "Book Ride",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-                          if (!_isLoading)
-                            Icon(
-                              _currentStep < 4
-                                  ? Icons.arrow_forward
-                                  : Icons.check_circle,
-                              size: 18,
+                          Text(
+                            _currentStep < 4 ? "Continue" : "Book Ride",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                               color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (_currentStep < 4)
+                            const Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white,
+                              size: 16,
+                              semanticLabel: 'Continue',
+                            )
+                          else if (_currentStep == 4)
+                            const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 16,
+                              semanticLabel: 'Book Ride',
                             ),
                         ],
                       ),
