@@ -1,9 +1,8 @@
-import 'dart:math' as math;
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../constants/app_color.dart';
-import 'dart:async';
 
-/// Dialog to show when booking is successful
+/// Dialog shown when booking is successfully completed
 class BookingSuccessDialog extends StatefulWidget {
   /// Callback when dialog is dismissed
   final VoidCallback onDismiss;
@@ -19,63 +18,44 @@ class BookingSuccessDialog extends StatefulWidget {
 }
 
 class _BookingSuccessDialogState extends State<BookingSuccessDialog>
-    with TickerProviderStateMixin {
-  late AnimationController _scaleController;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-
-  late AnimationController _confettiController;
-  late Animation<double> _confettiAnimation;
-
-  // For auto-closing
-  Timer? _autoCloseTimer;
 
   @override
   void initState() {
     super.initState();
-
-    // Scale animation for the card entry
-    _scaleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _scaleController,
-      // Use spring curve to match the Kotlin implementation
-      curve: const ElasticOutCurve(0.6),
-    );
-
-    // Confetti animation with delay
-    _confettiController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
 
-    _confettiAnimation = CurvedAnimation(
-      parent: _confettiController,
-      // Use spring curve to match the Kotlin implementation
-      curve: const ElasticOutCurve(0.6),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.elasticOut,
+    ));
 
-    // Start the scale animation immediately
-    _scaleController.forward();
+    _controller.forward();
 
-    // Start the confetti animation after a delay
-    Future.delayed(const Duration(milliseconds: 400), () {
-      _confettiController.forward();
+    // Auto-close dialog after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        _dismissDialog();
+      }
     });
+  }
 
-    // Auto-close after 5 seconds
-    _autoCloseTimer = Timer(const Duration(seconds: 5), () {
-      widget.onDismiss();
-    });
+  void _dismissDialog() {
+    Navigator.of(context).pop();
+    widget.onDismiss();
   }
 
   @override
   void dispose() {
-    _scaleController.dispose();
-    _confettiController.dispose();
-    _autoCloseTimer?.cancel();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -85,177 +65,266 @@ class _BookingSuccessDialogState extends State<BookingSuccessDialog>
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: AnimatedBuilder(
-        animation: _scaleController,
+        animation: _controller,
         builder: (context, child) {
           return Transform.scale(
             scale: _scaleAnimation.value,
-            child: Opacity(
-              opacity: _scaleAnimation.value.clamp(0.0, 1.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Success animation container with fallback for safety
-                    AnimatedBuilder(
-                      animation: _confettiController,
-                      builder: (context, child) {
-                        return Container(
-                          width: 100,
-                          height: 100,
-                          margin: const EdgeInsets.only(bottom: 24),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Success circle background
-                              Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: RadialGradient(
-                                    colors: [
-                                      const Color(0xFF10B981).withOpacity(0.1),
-                                      const Color(0xFF10B981).withOpacity(0.05),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              // Success icon with animation
-                              Transform.scale(
-                                scale: _confettiAnimation.value,
-                                child: const Icon(
-                                  Icons.check_circle,
-                                  color: Color(0xFF10B981),
-                                  size: 64,
-                                ),
-                              ),
-
-                              // Confetti particles
-                              if (_confettiAnimation.value > 0)
-                                CustomPaint(
-                                  painter: ConfettiPainter(
-                                    progress: _confettiAnimation.value,
-                                  ),
-                                  size: const Size(100, 100),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    const Text(
-                      "Ride Booked!",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColor.textDarkBlue,
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    const Text(
-                      "Your ride has been scheduled successfully. We'll send you a reminder before your pickup time.",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColor.textMediumGray,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: widget.onDismiss,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.primaryBlue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                        child: const Text(
-                          "Great!",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: child,
           );
         },
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 8),
+
+              // Success checkmark with confetti
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Rotating Confetti
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: RotatingConfetti(),
+                  ),
+
+                  // Success checkmark
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryPurple.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: AppColor.primaryPurple,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              const Text(
+                "Booking Successful!",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.textDarkBlue,
+                  letterSpacing: 0,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              const Text(
+                "Your ride has been scheduled successfully.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColor.textMediumGray,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              ElevatedButton(
+                onPressed: _dismissDialog,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primaryPurple,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(150, 45),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  "Great!",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-/// Custom painter for the confetti particles
+/// Widget that displays rotating confetti around the success mark
+class RotatingConfetti extends StatefulWidget {
+  const RotatingConfetti({Key? key}) : super(key: key);
+
+  @override
+  State<RotatingConfetti> createState() => _RotatingConfettiState();
+}
+
+class _RotatingConfettiState extends State<RotatingConfetti>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<ConfettiPiece> _confettiPieces;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4000),
+    )..repeat();
+
+    // Create confetti pieces
+    final random = Random();
+    _confettiPieces = List.generate(12, (index) {
+      return ConfettiPiece(
+        angle: index * (pi / 6), // Distribute evenly in a circle
+        distance: 40 + random.nextDouble() * 10, // Vary distance slightly
+        color: index % 3 == 0
+            ? AppColor.primaryBlue
+            : index % 3 == 1
+                ? AppColor.primaryPurple
+                : Colors.amber,
+        size: 5 + random.nextDouble() * 5,
+        rotationSpeed: 0.2 + random.nextDouble() * 0.4,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          size: const Size(100, 100),
+          painter: ConfettiPainter(
+            confettiPieces: _confettiPieces,
+            progress: _controller.value,
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Data class for a confetti piece
+class ConfettiPiece {
+  /// Initial angle from center
+  final double angle;
+
+  /// Distance from center
+  final double distance;
+
+  /// Color of the confetti piece
+  final Color color;
+
+  /// Size of the confetti piece
+  final double size;
+
+  /// Rotation speed
+  final double rotationSpeed;
+
+  /// Creates a confetti piece
+  ConfettiPiece({
+    required this.angle,
+    required this.distance,
+    required this.color,
+    required this.size,
+    required this.rotationSpeed,
+  });
+}
+
+/// Custom painter for the rotating confetti
 class ConfettiPainter extends CustomPainter {
+  final List<ConfettiPiece> confettiPieces;
   final double progress;
 
-  ConfettiPainter({required this.progress});
+  ConfettiPainter({
+    required this.confettiPieces,
+    required this.progress,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (progress < 0.1) return;
-
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-    final particles = 12;
-    final particleRadius = 4.0;
 
-    for (int i = 0; i < particles; i++) {
-      final angle = (i * 360 / particles) * (math.pi / 180);
-      final x = center.dx + radius * 0.8 * math.cos(angle);
-      final y = center.dy + radius * 0.8 * math.sin(angle);
+    for (final piece in confettiPieces) {
+      // Calculate rotation angle based on progress and speed
+      final rotationAngle =
+          piece.angle + (progress * 2 * pi * piece.rotationSpeed);
 
-      final paint = Paint();
+      // Calculate position
+      final x = center.dx + cos(rotationAngle) * piece.distance;
+      final y = center.dy + sin(rotationAngle) * piece.distance;
 
-      // Alternate colors for particles
-      if (i % 3 == 0) {
-        paint.color = AppColor.primaryBlue;
-      } else if (i % 3 == 1) {
-        paint.color = AppColor.primaryPurple;
+      // Draw confetti piece
+      final paint = Paint()
+        ..color = piece.color
+        ..style = PaintingStyle.fill;
+
+      // Create a star shape
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(
+          rotationAngle * 2); // Additional rotation for the piece itself
+
+      // Draw a simple star/confetti piece
+      final path = Path();
+      if (piece.color == Colors.amber) {
+        // Star shape for gold confetti
+        for (int i = 0; i < 5; i++) {
+          final starAngle = i * 2 * pi / 5;
+          final x1 = cos(starAngle) * piece.size;
+          final y1 = sin(starAngle) * piece.size;
+          final x2 = cos(starAngle + pi / 5) * (piece.size / 2);
+          final y2 = sin(starAngle + pi / 5) * (piece.size / 2);
+
+          if (i == 0) {
+            path.moveTo(x1, y1);
+          } else {
+            path.lineTo(x1, y1);
+          }
+          path.lineTo(x2, y2);
+        }
+        path.close();
       } else {
-        paint.color = Colors.teal; // Represents AccentTeal in Kotlin
+        // Circle for colored confetti
+        path.addOval(
+            Rect.fromCircle(center: Offset.zero, radius: piece.size / 2));
       }
 
-      // Draw the particle with size scaled by progress
-      canvas.drawCircle(
-        Offset(x, y),
-        particleRadius * progress,
-        paint,
-      );
+      canvas.drawPath(path, paint);
+      canvas.restore();
     }
   }
 
   @override
-  bool shouldRepaint(covariant ConfettiPainter oldDelegate) {
+  bool shouldRepaint(ConfettiPainter oldDelegate) {
     return oldDelegate.progress != progress;
   }
 }
