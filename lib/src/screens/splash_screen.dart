@@ -129,23 +129,25 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: 40),
 
                 // App name
-                const Text(
+                Text(
                   'Health Ride',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: AppColor.textDarkBlue,
+                    fontFamily: 'Poppins',
                   ),
                 ),
 
                 const SizedBox(height: 8),
 
                 // Tagline
-                const Text(
+                Text(
                   'Medical transportation simplified',
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColor.textMediumGray,
+                    fontFamily: 'Poppins',
                   ),
                 ),
 
